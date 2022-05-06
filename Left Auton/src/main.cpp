@@ -27,7 +27,7 @@ using namespace vex;
 
   motor liftMotor = motor(PORT20, ratio36_1, false);
 
-  motor intake = motor(PORT14, ratio18_1, false);
+  motor intake = motor(PORT14, ratio18_1, true);
 
   controller Master = controller();
 
