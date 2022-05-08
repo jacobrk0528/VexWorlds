@@ -442,14 +442,14 @@ void autonomous(void) {
   moveBackClaw(UP);
   wait(100, msec);
 
-  timeDrive(12, 800);
+  timeDrive(12, 1000);
   moveFrontClaw(DOWN);
   wait(300, msec);
-  timeDrive(12, 650);
-  liftPD(100);
-  turnPD(-90); // 90 degree
+  timeDrive(-12, 720);
+  liftPD(200);
+  turnPD(-84); // 90 degree
   drivePD(-100);
-  timeDrive(-5, 300);
+  timeDrive(-5, 700);
   moveBackClaw(DOWN);
   moveTilter(UP);
   drivePD(200);
@@ -459,12 +459,13 @@ void autonomous(void) {
 double driverRightOutput = 0;
 double driverLeftOutput = 0;
 double maxSpeed = 12;
+double rightSpeed = 0;
+double leftSpeed = 0;
+double slewValue = 1;
+
 
 void usercontrol(void) {
   setDriveBreak();
-  moveFrontClaw(UP);
-  moveTilter(DOWN);
-  moveBackClaw(UP);
   while (1) {
     //DRIVE
     double leftJoystickY = Master.Axis3.value();   // figure out what values these return
@@ -477,16 +478,24 @@ void usercontrol(void) {
       rightJoystickY = 0;
     }
 
-    if (rightJoystickY > maxSpeed) {
-      rightJoystickY = maxSpeed;
-    } else if (rightJoystickY < -maxSpeed) {
-      rightJoystickY = - maxSpeed;
+    if (rightJoystickY > rightSpeed) {
+      if(rightSpeed < maxSpeed) {
+        rightSpeed += slewValue;
+      }
+    } else if (rightJoystickY < rightSpeed) {
+      if (rightSpeed > -maxSpeed){
+        rightSpeed -= slewValue;
+      }
     }
 
-    if (leftJoystickY > maxSpeed) {
-      leftJoystickY = maxSpeed;
-    } else if (leftJoystickY < -maxSpeed) {
-      leftJoystickY = - maxSpeed;
+    if (leftJoystickY > leftSpeed) {
+      if(leftSpeed < maxSpeed) {
+        leftSpeed += slewValue;
+      }
+    } else if (leftJoystickY < leftSpeed) {
+      if (leftSpeed > -maxSpeed){
+        leftSpeed -= slewValue;
+      }
     }
 
     if (Master.ButtonLeft.pressing()) {
@@ -495,12 +504,12 @@ void usercontrol(void) {
       maxSpeed = 12;
     }
 
-    rightFrontMotor.spin(fwd, rightJoystickY, volt);
-    rightMidMotor.spin(fwd, rightJoystickY, volt);
-    rightBackMotor.spin(fwd, rightJoystickY, volt);
-    leftFrontMotor.spin(fwd, leftJoystickY, volt);
-    leftMidMotor.spin(fwd, leftJoystickY, volt);
-    leftBackMotor.spin(fwd, leftJoystickY, volt);
+    rightFrontMotor.spin(fwd, rightSpeed, volt);
+    rightMidMotor.spin(fwd, rightSpeed, volt);
+    rightBackMotor.spin(fwd, rightSpeed, volt);
+    leftFrontMotor.spin(fwd, leftSpeed, volt);
+    leftMidMotor.spin(fwd, leftSpeed, volt);
+    leftBackMotor.spin(fwd, leftSpeed, volt);
 
     //FRONT LIFT
     if(Master.ButtonR1.pressing()) {

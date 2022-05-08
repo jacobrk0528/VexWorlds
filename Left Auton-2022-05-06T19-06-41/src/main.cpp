@@ -441,30 +441,6 @@ void autonomous(void) {
   moveTilter(DOWN);
   moveBackClaw(UP);
   wait(100, msec);
-
-  // grab goal from platform
-      drivePD(-100);
-      moveBackClaw(DOWN);
-      wait(300, msec);
-      moveTilter(UP);
-
-      // turn to face left yellow mobile goal
-      drivePD(150);
-      turnPD(83);
-      intake.spin(fwd, 12, volt);
-      //leftDrive(102, 6);
-
-      // grab left yellow mobil goal
-      startLift(-4);
-      drivePD(750);
-      intake.spin(reverse, 12, volt);
-      wait(100, msec);
-      stopIntake();
-      moveFrontClaw(DOWN);
-      wait(300, msec);
-      intake.spin(fwd, 12, volt);
-      liftPD(100);
-      timeDrive(-12, 800);
 }
 
 double driverRightOutput = 0;
@@ -472,7 +448,7 @@ double driverLeftOutput = 0;
 double maxSpeed = 12;
 double rightSpeed = 0;
 double leftSpeed = 0;
-double slewValue = 1.2;
+double slewValue = 1;
 
 
 void usercontrol(void) {
@@ -492,36 +468,27 @@ void usercontrol(void) {
     if (rightJoystickY > rightSpeed) {
       if(rightSpeed < maxSpeed) {
         rightSpeed += slewValue;
-      } else {
-        rightSpeed = maxSpeed;
       }
     } else if (rightJoystickY < rightSpeed) {
       if (rightSpeed > -maxSpeed){
         rightSpeed -= slewValue;
-      } else {
-        rightSpeed = -maxSpeed;
       }
     }
 
     if (leftJoystickY > leftSpeed) {
       if(leftSpeed < maxSpeed) {
         leftSpeed += slewValue;
-      } else {
-        leftSpeed = maxSpeed;
       }
     } else if (leftJoystickY < leftSpeed) {
       if (leftSpeed > -maxSpeed){
         leftSpeed -= slewValue;
       }
-      else {
-        leftSpeed = -maxSpeed;
-      }
     }
 
     if (Master.ButtonLeft.pressing()) {
-      slewValue = 12;
+      maxSpeed = 6;
     } else if (Master.ButtonRight.pressing()) {
-      slewValue = 1.2;
+      maxSpeed = 12;
     }
 
     rightFrontMotor.spin(fwd, rightSpeed, volt);
